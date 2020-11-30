@@ -1,2 +1,2 @@
-# jotto-2020
-The game game of Jotto recreated as a web API implemented with the Mule 4 integration platform.
+# jotto-2020-web-client
+The EnyoJS-based web client which uses the Jotto 2020 game API.
