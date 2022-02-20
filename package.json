@@ -1,6 +1,6 @@
 {
   "name": "jotto-2020",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An Enyo-based template to build web applications using HTML, CSS and JavaScript.",
   "main": "index.js",
   "moduleDir": "src",

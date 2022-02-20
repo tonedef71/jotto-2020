@@ -40,8 +40,6 @@ var Unicode = {
   downwardArrow: "\u2193"
 };
 
-var backgroundColor = "#053120";
-
 module.exports = kind({
   kind: FittableRows,
   components: [
@@ -56,8 +54,6 @@ module.exports = kind({
       handleAs: "json",
       onResponse: "processGameServerResponse",
       onError: "processError",
-      //url: "http://localhost:8081/api/game/jotto",
-      url: "http://jotto2020.us-e2.cloudhub.io/api/game/jotto",
       method: "POST",
       sync: false
     },
@@ -68,20 +64,16 @@ module.exports = kind({
       handleAs: "json",
       onResponse: "processGameServerResponse",
       onError: "processError",
-      //url: "http://localhost:8081/api/game/jotto/guess/",
-      url: "http://jotto2020.us-e2.cloudhub.io/api/game/jotto/guess/",
       method: "PUT",
       sync: false
     },
     {
       kind: Toolbar,
-      style: "background-color: " + backgroundColor,
       components: [
         {
           kind: EnyoImage,
-          /** style: "width:165px; height:55px", */
+          /** style: "width:102px; height:49px", */
           src: "assets/jotto_logo_small.png",
-          placeholder: EnyoImage.placeholder,
           alt: "Jotto Logo"
         },
         {
@@ -91,12 +83,12 @@ module.exports = kind({
               kind: PickerDecorator,
               components: [
                 {
-                  style: "min-width: 60px; background-color: " + backgroundColor
+                  style: "min-width: 60px;"
                 },
                 {
                   kind: IntegerPicker,
                   name: "puzzleSizePicker",
-                  style: "color: white; background-color: " + backgroundColor,
+                  style: "color: white;",
                   min: 2,
                   max: 12,
                   value: 5
@@ -110,23 +102,39 @@ module.exports = kind({
           ]
         },
         {
-          kind: Button,
-          name: "newGameButton",
-          content: "New Game",
-          style: "background-color: orange; color: black",
-          ontap: "newGame"
+          kind: TooltipDecorator,
+          components: [
+            {
+              kind: Button,
+              name: "newGameButton",
+              content: "New Game",
+              style: "background-color: orange; color: black",
+              ontap: "newGame"
+            },
+            {
+              kind: Tooltip,
+              content: "Start a brand new game"
+            }
+          ]
         },
         {
-          kind: Button,
-          content: "?",
-          style: "background-color: " + backgroundColor,
-          ontap: "showHowToPlayPopup"
+          kind: TooltipDecorator,
+          components: [
+            {
+              kind: Button,
+              content: "?",
+              ontap: "showHowToPlayPopup"
+            },
+            {
+              kind: Tooltip,
+              content: "How to play"
+            }
+          ]
         }
       ]
     },
     {
       kind: Toolbar,
-      style: "background-color: " + backgroundColor,
       components: [
         {
           kind: Control,
@@ -149,8 +157,7 @@ module.exports = kind({
             },
             {
               kind: JottoWord,
-              name: "jottoWord",
-              fit: true
+              name: "jottoWord"
             }
           ]
         },
@@ -171,7 +178,6 @@ module.exports = kind({
                 },
                 {
                   kind: JottoResult,
-                  fit: true,
                   result: "***o.",
                   guess: "jotox"
                 }
@@ -183,7 +189,6 @@ module.exports = kind({
     },
     {
       kind: Toolbar,
-      style: "background-color: " + backgroundColor,
       components: [
         {
           kind: UIKeyboard,
@@ -262,25 +267,28 @@ module.exports = kind({
     }
   ],
   create: function() {
-    this.log("MainView::create()");
+    //this.log("MainView::create()");
     this.inherited(arguments);
     this.data = [];
     this.guessHistory = null;
     this.sessionToken = null;
     this.guessesRemaining = 0;
+    this.guessesToStart = 0;
     this.numLetters = 0;
     this.gameStatus = 0;
     this.solution = "";
   },
   destroy: function() {
-    this.log("MainView::destroy()");
+    //this.log("MainView::destroy()");
     this.inherited(arguments);
   },
   rendered: function() {
-    this.log("MainView::rendered()");
+    //this.log("MainView::rendered()");
     this.inherited(arguments);
     this.$.guesses.setCount((this.data || []).length);
   },
+  //baseUrl: "http://localhost:8081/api/game",
+  baseUrl: "http://jotto2020.us-e2.cloudhub.io/api/game",
   clearGuessHistory: function() {
     this.guessHistory = {};
   },
@@ -288,13 +296,13 @@ module.exports = kind({
     var statusDescription = "";
     switch (this.gameStatus) {
       case 0:
-        statusDescription = ">>> Click [New Game] to start <<<";
+        statusDescription = "Click the [New Game] button to start ...";
         break;
       case 1:
-        statusDescription = "Guesses remaining: " + this.guessesRemaining;
+        statusDescription = "Guesses remaining: " + this.guessesRemaining + " of " + this.guessesToStart;
         break;
       case 2:
-        statusDescription = "*** Kudos! You won in " + this.data.length + " guesses. ***";
+        statusDescription = "*** Kudos! You won with " + this.data.length + " of " + this.guessesToStart + " guesses. ***";
         break;
       case 3:
         statusDescription = "*** Sorry! You lost. ***";
@@ -347,19 +355,16 @@ module.exports = kind({
     }
   },
   invokeNewGameWebService: function(numLetters) {
-    this.log("invokeNewGameWebService: " + numLetters);
-    var indexOfQuote = this.$.newGameWebService.url.lastIndexOf("?");
-    var url = (indexOfQuote >= 0) ? this.$.newGameWebService.url.substring(0, indexOfQuote) : this.$.newGameWebService.url;
-    url = url + "?letters=" + numLetters;
+    //this.log("invokeNewGameWebService: " + numLetters);
+    var url = this.baseUrl + "/jotto?letters=" + numLetters;
     this.$.newGameWebService.url = url;
     this.$.newGameWebService.send({});
     this.showSpinnerPopup();
   },
   invokeNewGuessWebService: function(guessText) {
-    this.log("invokeNewGuessWebService: " + guessText);
-    var indexOfSlash = this.$.newGuessWebService.url.lastIndexOf("/");
-    var url = (indexOfSlash >= 0) ? this.$.newGuessWebService.url.substring(0, indexOfSlash) : this.$.newGuessWebService.url;
-    this.$.newGuessWebService.url = url + "/" + guessText;
+    //this.log("invokeNewGuessWebService: " + guessText);
+    var url = this.baseUrl + "/jotto/guess/" + guessText;
+    this.$.newGuessWebService.url = url;
     this.$.newGuessWebService.set("headers", {"x-session": this.sessionToken});
     this.$.newGuessWebService.send({});
     this.guessHistory[guessText] = guessText;
@@ -367,7 +372,7 @@ module.exports = kind({
   },
   finishGuess: function(inSender, inEvent) {
     var guessText = inEvent.guess;
-    this.log("finishGuess: " + guessText);
+    //this.log("finishGuess: " + guessText);
     if (null == this.guessHistory[guessText]) {
       this.invokeNewGuessWebService(guessText);
     }
@@ -381,9 +386,10 @@ module.exports = kind({
   startNewGame: function() {
     var numLetters = this.$.puzzleSizePicker.selected.content;
     this.invokeNewGameWebService(numLetters);
+    this.$.keyboardControl.resetKeyStates();
   },
   setupGuess: function(inSender, inEvent) {
-    this.log("setupGuess...");
+    //this.log("setupGuess...");
     var index = inEvent.index;
     var item = inEvent.item;
     var datum = this.data[index];
@@ -398,7 +404,7 @@ module.exports = kind({
     return true;
   },
   newGame: function(inSender, inEvent) {
-    this.log("newGame click...");
+    //this.log("newGame click...");
     
     var gameStatus = this.get("gameStatus");
     if (gameStatus != 1) {
@@ -421,11 +427,11 @@ module.exports = kind({
     //var data = JSON.stringify(inEvent.data[0], null, 2);
     var data = inEvent.data;
     var stats = data.stats || {};
+    var turnsRemaining = stats.turnsRemaining || 0;
     var turnsTakenList = data["turnsTaken"];
     var turnCount = turnsTakenList.length;
 
     this.set("sessionToken", data["token"]);
-    this.set("guessesRemaining", stats.turnsRemaining || 0);
     this.set("numLetters", stats.puzzleLength);
     this.set("gameStatus", 1);
     this.set("solution", "?".repeat(this.numLetters));
@@ -433,9 +439,17 @@ module.exports = kind({
 
     if (turnCount < 1) {
       // New game
+      this.set("guessesToStart", turnsRemaining);
       this.clearGuessHistory();
       this.$.keyboardControl.set("guessLength", this.numLetters);
+      this.$.keyboardControl.resetKeyStates();
+      this.$.keyboardControl.resetGuestStatistics();
     }
+    else {
+      this.$.keyboardControl.set("turnsTaken", turnsTakenList);
+    }
+
+    this.set("guessesRemaining", turnsRemaining);
 
     for (var i = 0; i < turnCount; ++i) {
       var item = turnsTakenList[i];

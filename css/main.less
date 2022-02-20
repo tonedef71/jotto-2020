@@ -9,82 +9,73 @@
 .main-view {
 }
 
-@font-face {
-  font-family: lovely_eunike_hans;
-  src: url(../fonts/lovely_eunike_hans.ttf);
+.onyx-picker .onyx-menu-item {
+  background-color: rgb(5, 49, 32) !important;
 }
 
-* { 
-  -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
+.onyx-picker .onyx-menu-item.selected {
+  background-color: #6ce890 !important;
 }
 
-body {
-  margin: 10px;
-  background-color: #333333;
+.onyx-menu-item:hover {
+  background-color: #f2ff91 !important;
+  color: #053120 !important;
 }
 
-.btn {
-  margin-left: 10px;
+.onyx-toolbar {
+  background-color: rgb(5, 49, 32);
 }
 
-.cryptogram {
-  margin: 10px;
-  padding: 20px 50px;
-  background-color: #BBBBBB;
+.onyx-toolbar .onyx-button {
+  background-color: rgb(5, 49, 32);
 }
 
-.cell {
-  float: left;
-  width: 24px;
-  padding: 10px 5px 3px;
-  margin: 2px;
-  font: 18px "Courier New", Courier, monospace;
-  text-align: center;
-  line-height: 80%;
+.button-absent {
+  background-color: #ff4f68 !important;
 }
 
-.cell > .top {
-  font-family: lovely_eunike_hans, "Courier New", Courier, monospace;
-  color: navy;
+.button-present {
+  background-color: #f2ff91 !important;
+  color: #053120 !important;
 }
 
-.selectedCell {
-  background-color: green;
-  color: white;
-  cursor: pointer;
+.button-perfect {
+  background-color: #6ce890 !important;
+  color: #053120 !important;
 }
 
-.selectedCell > .top {
-  color: white;
+.button-highlight {
+  background-color: #f8b068 !important;
+  color: #053120 !important;
 }
 
-.topButtons {
-  margin: 10px;
+.cell-highlight {
+  background-color: #f8b068;
+  font-style: normal;
+  font-weight: bold;
 }
 
-.distribution {
-  font: 14px "Courier New";
-  color: black;
-  border: 1px solid;
-  margin-top: 20px;
-  padding: 5px;
+.cell-absent {
+  background-color: #ff4f68;
+  font-style: normal;
+  font-weight: normal;
 }
 
-.distroLetter:after {
-  content: ", ";
+.cell-present {
+  background-color: #f2ff91;
+  font-style: oblique;
+  font-weight: normal;
 }
 
-.distroLetter:last-child:after {
-  content: "";
+.cell-perfect {
+  background-color: #6ce890;
+  font-style: normal;
+  font-weight: bold;
 }
 
-.toolbar-fixed-width > .onyx-button {
-  width: 80px;
+.text-typing {
+  color: #F2F2F2 !important;
 }
-
-.fittable-sample-test {
-  border-width: 0.2em;
-  border-color: red;
+.text-complete {
+  color: #f8b068 !important;
 }
