@@ -151,8 +151,7 @@ module.exports = kind({
     this.set("guessStatistics", {
       "absent": {},    //. or -
       "present": {},   //o
-      "perfect": {},   //*
-      "count": {}
+      "perfect": {}   //*
     });
   },
   updateGuessStatistics: function() {
